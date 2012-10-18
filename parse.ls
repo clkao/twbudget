@@ -6,33 +6,33 @@ year = argv.year or throw 'year required'
 
 readit = (done) ->
     entry = []
-    cat = {}
     depcat = {}
     depname = {}
     topname = {}
     var current_cat
+    populate_fussy_entries = -> for depcatname, {name,code,amount} of depcat
+        [A, B, C] = depcatname.split \.
+        # no subcategory available
+        unless [e for {ref}:e in entry when ref[0 to 2] == [A,B,C]].length
+            _depcat = depcat["#A.#B.#C"]
+            entry.push {code, amount} <<< do
+                name: '無細項'
+                topname: topname[A]
+                depname: depname["#A.#B"]
+                depcat: _depcat.name
+                cat: _depcat.cat
+                ref: [A, B, C]
+
     [A, B, C, D, code, name, amount] <- csv!from.stream fs.createReadStream(file)
     .on \end ->
-        for depcatname, {name,code,amount} of depcat
-            [A, B, C] = depcatname.split \.
-            # no subcategory available
-            unless [e for {ref}:e in entry when ref[0 to 2] == [A,B,C]].length
-                _depcat = depcat["#A.#B.#C"]
-                entry.push {code, amount} <<< do
-                    name: '無細項'
-                    topname: topname[A]
-                    depname: depname["#A.#B"]
-                    depcat: _depcat.name
-                    cat: _depcat.cat
-                    ref: [A, B, C]
-
+        populate_fussy_entries
         done entry
     .on \record
     amount -= /,/g
     amount = +amount * 1000
     [A, B, C, D] = for x in [A, B, C, D] => x - /^\s*|\s*$/g
     match A, B, C, D
-    | /\D/ =>
+    | /\D/                => # ignore csv header
     | _, _, _ , \999      => current_cat := name
     | _, /\S/, /\S/, /\S/ => entry.push {code, name, amount} <<< do
         topname: topname[A]
