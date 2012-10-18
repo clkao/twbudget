@@ -23,14 +23,14 @@ readit = (done) ->
                 cat: _depcat.cat
                 ref: [A, B, C]
 
-    [A, B, C, D, code, name, amount] <- csv!from.stream fs.createReadStream(file)
+    [...ref, code, name, amount, _, _, remark] <- csv!from.stream fs.createReadStream(file)
     .on \end ->
         populate_fussy_entries
         done entry
     .on \record
     amount -= /,/g
     amount = +amount * 1000
-    [A, B, C, D] = for x in [A, B, C, D] => x - /^\s*|\s*$/g
+    [A, B, C, D] = for x in ref => x - /^\s*|\s*$/g
     match A, B, C, D
     | /\D/                => # ignore csv header
     | _, _, _ , \999      => current_cat := name
