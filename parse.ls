@@ -10,10 +10,10 @@ readit = (done) ->
     depname = {}
     topname = {}
     var current_cat
-    populate_fussy_entries = -> for depcatname, {name,code,amount} of depcat
+    populate_fuzzy_entries = -> for depcatname, {name,code,amount} of depcat
         [A, B, C] = depcatname.split \.
         # no subcategory available
-        unless [e for {ref}:e in entry when ref[0 to 2] == [A,B,C]].length
+        unless [e for {ref}:e in entry when ref[0 to 2] === [A,B,C]].length
             _depcat = depcat["#A.#B.#C"]
             entry.push {code, amount} <<< do
                 name: '無細項'
@@ -25,7 +25,7 @@ readit = (done) ->
 
     [...ref, code, name, amount, _, _, remark] <- csv!from.stream fs.createReadStream(file)
     .on \end ->
-        populate_fussy_entries
+        populate_fuzzy_entries!
         done entry
     .on \record
     amount -= /,/g
@@ -45,7 +45,8 @@ readit = (done) ->
     | otherwise           => topname[A] = name
 
 data <- readit!
-console.log <[year code amount name topname depname depcat cat ref]>.join \,
+fields = <[year code amount name topname depname depcat cat ref]>
+console.log fields.join \,
 for {ref}:d in data
     [year] +++ d<[code amount name topname depname depcat cat]> +++ ref.join \.
     |> -> console.log it.join \,
