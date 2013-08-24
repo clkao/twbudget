@@ -41,13 +41,13 @@ readit = (done) ->
         cat: current_cat
         ref: [A, B, C, D]
     | _, /\S/, /\S/       => depcat["#A.#B.#C"] = {name,code,amount,cat:current_cat}
-    | _, /\S/             => depname["#A.#B"] = name 
+    | _, /\S/             => depname["#A.#B"] = name
     | otherwise           => topname[A] = name
 
 data <- readit!
 fields = <[year code amount name topname depname depcat cat ref]>
 console.log fields.join \,
 for {ref}:d in data
-    [year] +++ d<[code amount name topname depname depcat cat]> +++ ref.join \.
+    [year] ++ d<[code amount name topname depname depcat cat]> ++ ref.join \.
     |> -> console.log it.join \,
 
