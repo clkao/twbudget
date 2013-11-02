@@ -23,7 +23,7 @@ readit = (done) ->
                 cat: _depcat.cat
                 ref: [A, B, C]
 
-    [...ref, code, name, amount, _, _, remark] <- csv!from.stream fs.createReadStream(file)
+    [...ref, code, name, amount, _, _, _,remark] <- csv!from.stream fs.createReadStream(file)
     .on \end ->
         populate_fuzzy_entries!
         done entry

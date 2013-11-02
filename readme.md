@@ -16,3 +16,5 @@ convert to csv, and do:
 
 CC0
 
+Use parse_ar.ls for 歲入預算表
+
