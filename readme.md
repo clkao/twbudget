@@ -11,3 +11,5 @@ convert to csv, and do:
 
     livescript parse.ls --file input.csv --year 2013 > output.csv
 
+Use parse_ar.ls for 歲入預算表
+
